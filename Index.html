@@ -1,0 +1,813 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¿Qué Sabes de Digitalizar ?</title>
+    <style>
+        /* ======================================= */
+        /* 1. LAYOUT PRINCIPAL (AJUSTES CRÍTICOS) */
+        /* ======================================= */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            min-height: 100vh; /* Asegura que ocupe toda la altura */
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            min-height: 400px;
+            box-sizing: border-box;
+            position: relative; /* CRÍTICO: Para que .content-logo se posicione dentro de este div */
+            overflow: hidden;
+        }
+
+        /* ======================================= */
+        /* 7. MARCA DE AGUA (SOLUCIÓN DEFINITIVA) */
+        /* ======================================= */
+        .content-logo {
+            position: absolute;
+            /* CRÍTICO: Centrado absoluto en el contenedor */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            /* TAMAÑO Y OPACIDAD */
+            width: 80%;
+            max-width: 400px;
+            height: auto;
+            opacity: 0.15; /* Subido ligeramente para que se note mejor */
+            z-index: 0; /* Capa inferior, detrás de todo */
+            pointer-events: none;
+        }
+
+        /* ======================================= */
+        /* 2. HEADER Y TÍTULO */
+        /* ======================================= */
+        .header-content {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            position: relative;
+            z-index: 2; /* Contenido siempre encima del logo (z-index: 0) */
+        }
+
+        #header-logo {
+            height: 50px;
+            width: auto;
+            margin-right: 15px;
+        }
+
+        h1 {
+            color: #004080;
+            margin: 0;
+        }
+
+        /* ======================================= */
+        /* 3. PANTALLAS (HOME/QUIZ/RESULTADO) */
+        /* ======================================= */
+        #name-input-screen {
+            text-align: center;
+            padding: 50px 20px;
+            position: relative;
+            z-index: 2; /* Contenido siempre encima del logo */
+        }
+
+        #quiz-container {
+            display: none;
+            position: relative;
+            z-index: 2; /* Contenido siempre encima del logo */
+        }
+
+        #result {
+            display: none;
+            text-align: center;
+            font-size: 1.5em;
+            color: #004080;
+            margin-top: 40px;
+            padding: 20px;
+            border: 2px solid #004080;
+            border-radius: 10px;
+            font-weight: bold;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* ======================================= */
+        /* 4. FORMULARIO Y BOTONES INICIO */
+        /* ======================================= */
+        #userNameInput,
+        #passwordInput {
+            padding: 10px;
+            margin: 10px auto;
+            width: 80%;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1.1em;
+            display: block;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        #startGameBtn {
+            padding: 12px 30px;
+            background-color: #004080;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            font-weight: bold;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+            position: relative;
+            z-index: 2;
+        }
+
+        #startGameBtn:hover {
+            background-color: #0056b3;
+        }
+
+        /* ======================================= */
+        /* 5. QUIZ Y OPCIONES */
+        /* ======================================= */
+        .question {
+            display: none;
+            margin-bottom: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .question.active {
+            display: block;
+        }
+
+        h3 {
+            color: #333;
+        }
+
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 8px 0;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            background-color: #f8f8f8;
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            text-align: left;
+            box-sizing: border-box;
+            position: relative;
+            z-index: 2;
+        }
+
+        .options button:hover:not(:disabled) {
+            background-color: #cce0ff;
+            border-color: #004080;
+        }
+
+        .options button.selected {
+            border: 3px solid #004080;
+            background-color: #f0f4f8;
+        }
+
+        .correct {
+            background-color: #c8e6c9 !important;
+            border-color: #008040 !important;
+        }
+
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border-color: #d32f2f !important;
+        }
+
+        /* ======================================= */
+        /* 6. BOTONES DE ACCIÓN Y ESTATUS */
+        /* ======================================= */
+        #action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            position: relative;
+            z-index: 2;
+        }
+
+        .action-button {
+            padding: 10px 20px;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            flex-grow: 1;
+            margin: 0 5px;
+            transition: opacity 0.3s, background-color 0.3s;
+        }
+
+        #validateBtn {
+            background-color: #008040;
+        }
+
+        #validateBtn:hover:not(:disabled) {
+            background-color: #006400;
+        }
+
+        #nextBtn {
+            background-color: #004080;
+        }
+
+        #nextBtn:hover:not(:disabled) {
+            background-color: #0056b3;
+        }
+
+
+        .action-button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #gameStatus {
+            margin-bottom: 20px;
+            padding: 10px;
+            border: 1px solid #004080;
+            border-radius: 5px;
+            background-color: #f5f8ff;
+            font-weight: bold;
+            color: #004080;
+            text-align: center;
+            position: relative;
+            z-index: 2;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+
+        <img class="content-logo" src="sena.png" alt="Logo SENA Marca de Agua">
+
+        <div class="header-content">
+            <img id="header-logo" src="jrn.png" alt="Logo de Archivo">
+            <h1>¿Qué sabes de Digitalizar ?</h1>
+        </div>
+        <p>Reto de conocimientos sobre conservación y digitalización documental.</p>
+
+        <div id="name-input-screen">
+            <h2>Bienvenido/a al Reto</h2>
+            <p>Por favor, ingresa tu nombre y el código de acceso para iniciar la prueba.</p>
+
+            <input type="text" id="userNameInput" placeholder="Tu Nombre" required>
+
+            <input type="password" id="passwordInput" placeholder="Código de Acceso" required>
+
+            <button id="startGameBtn">Comenzar Reto ▶</button>
+        </div>
+
+        <div id="quiz-container">
+            <div id="gameStatus"></div>
+
+            <div class="question" data-question="1">
+                <h3>1. ¿Qué entiendes por conservación documental?</h3>
+                <div class="options">
+                    <button data-correct="true">Conjunto de técnicas para preservar documentos físicos</button>
+                    <button data-correct="false">Proceso de digitalización de documentos</button>
+                    <button data-correct="false">Eliminación de documentos obsoletos</button>
+                    <button data-correct="false">Clasificación por colores</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="2">
+                <h3>2. Menciona tres factores ambientales que pueden deteriorar un documento físico.</h3>
+                <div class="options">
+                    <button data-correct="true">Humedad, luz solar y temperatura</button>
+                    <button data-correct="false">Ruido, polvo y ventilación</button>
+                    <button data-correct="false">Color, tamaño y peso</button>
+                    <button data-correct="false">Internet, software y escáner</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="3">
+                <h3>3. ¿Qué tipo de guantes se recomienda usar para manipular documentos antiguos?</h3>
+                <div class="options">
+                    <button data-correct="true">Guantes de algodón</button>
+                    <button data-correct="false">Guantes de látex</button>
+                    <button data-correct="false">Guantes de cuero</button>
+                    <button data-correct="false">Guantes plásticos</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="4">
+                <h3>4. ¿Cuál es la temperatura y humedad relativa ideal para conservar documentos en papel?</h3>
+                <div class="options">
+                    <button data-correct="true">18-22°C y 45-60% HR</button>
+                    <button data-correct="false">30°C y 80% HR</button>
+                    <button data-correct="false">10°C y 20% HR</button>
+                    <button data-correct="false">25°C y 90% HR</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="5">
+                <h3>5. ¿Qué riesgos implica el uso de cinta adhesiva en documentos de archivo?</h3>
+                <div class="options">
+                    <button data-correct="true">Deterioro químico y pérdida de información</button>
+                    <button data-correct="false">Mejora la conservación</button>
+                    <button data-correct="false">No tiene ningún riesgo</button>
+                    <button data-correct="false">Facilita la digitalización</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="6">
+                <h3>6. ¿Qué diferencia hay entre restauración y conservación documental?</h3>
+                <div class="options">
+                    <button data-correct="true">La restauración repara daños, la conservación previene</button>
+                    <button data-correct="false">Son exactamente lo mismo</button>
+                    <button data-correct="false">La conservación destruye documentos</button>
+                    <button data-correct="false">La restauración clasifica documentos</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="7">
+                <h3>7. ¿Qué tipo de contenedores o cajas se recomienda para almacenar documentos?</h3>
+                <div class="options">
+                    <button data-correct="true">Cajas libres de ácido</button>
+                    <button data-correct="false">Cajas de cartón reciclado sin tratamiento</button>
+                    <button data-correct="false">Bolsas plásticas</button>
+                    <button data-correct="false">Cajas metálicas sin ventilación</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="8">
+                <h3>8. ¿Qué norma nacional regula la conservación documental en Colombia?</h3>
+                <div class="options">
+                    <button data-correct="true">Ley 594 de 2000</button>
+                    <button data-correct="false">Ley 80 de 1993</button>
+                    <button data-correct="false">Ley 100 de 1993</button>
+                    <button data-correct="false">Ley 142 de 1994</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="9">
+                <h3>9. ¿Qué consecuencias puede tener una mala manipulación de documentos físicos?</h3>
+                <div class="options">
+                    <button data-correct="true">Deterioro, pérdida de información y daño irreversible</button>
+                    <button data-correct="false">Mejor conservación</button>
+                    <button data-correct="false">Mayor digitalización</button>
+                    <button data-correct="false">No tiene consecuencias</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="10">
+                <h3>10. ¿Qué técnicas conoces para prolongar la vida útil de un documento físico?</h3>
+                <div class="options">
+                    <button data-correct="true">Control ambiental, manipulación segura y almacenamiento adecuado</button>
+                    <button data-correct="false">Fotocopiado y plastificación</button>
+                    <button data-correct="false">Digitalización sin respaldo físico</button>
+                    <button data-correct="false">Clasificación por colores</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="11">
+                <h3>11. ¿Qué entiendes por digitalización documental?</h3>
+                <div class="options">
+                    <button data-correct="true">Proceso técnico de convertir documentos físicos en digitales</button>
+                    <button data-correct="false">Clasificación manual de documentos</button>
+                    <button data-correct="false">Eliminación de documentos físicos</button>
+                    <button data-correct="false">Restauración de documentos antiguos</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="12">
+                <h3>12. ¿Qué tipo de escáneres se utilizan para digitalizar documentos de archivo?</h3>
+                <div class="options">
+                    <button data-correct="true">Escáneres de cama plana y alimentadores automáticos</button>
+                    <button data-correct="false">Escáneres térmicos</button>
+                    <button data-correct="false">Escáneres de código de barras</button>
+                    <button data-correct="false">Escáneres de huella digital</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="13">
+                <h3>13. ¿Qué función cumple el software OCR en la digitalización?</h3>
+                <div class="options">
+                    <button data-correct="true">Reconocer texto en imágenes</button>
+                    <button data-correct="false">Convertir documentos a PDF</button>
+                    <button data-correct="false">Clasificar documentos por colores</button>
+                    <button data-correct="false">Realizar la impresión final</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="14">
+                <h3>14. ¿Qué son los metadatos estructurados y para qué sirven?</h3>
+                <div class="options">
+                    <button data-correct="true">Son datos que describen el contenido digital y facilitan su búsqueda</button>
+                    <button data-correct="false">Son etiquetas decorativas sin función técnica</button>
+                    <button data-correct="false">Son códigos para eliminar documentos</button>
+                    <button data-correct="false">Son formatos de imagen comprimida</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="15">
+                <h3>15. ¿Qué ventajas tiene la indexación automatizada frente a la manual?</h3>
+                <div class="options">
+                    <button data-correct="true">Mayor velocidad, precisión y trazabilidad</button>
+                    <button data-correct="false">Permite destruir documentos más rápido</button>
+                    <button data-correct="false">Evita el uso de metadatos</button>
+                    <button data-correct="false">No tiene ninguna ventaja</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="16">
+                <h3>16. ¿Qué protocolos técnicos conoces para digitalizar documentos institucionales?</h3>
+                <div class="options">
+                    <button data-correct="true">Acuerdo 005 de 2018 y estándares ISO</button>
+                    <button data-correct="false">Ley 100 de 1993</button>
+                    <button data-correct="false">Normas de contabilidad financiera</button>
+                    <button data-correct="false">Manual de estilo APA</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="17">
+                <h3>17. ¿Qué norma nacional regula la digitalización documental en Colombia?</h3>
+                <div class="options">
+                    <button data-correct="true">Acuerdo 005 de 2018 del Archivo General de la Nación</button>
+                    <button data-correct="false">Ley 142 de servicios públicos</button>
+                    <button data-correct="false">Ley 80 de contratación estatal</button>
+                    <button data-correct="false">Ley 30 de educación superior</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="18">
+                <h3>18. ¿Qué riesgos existen si se digitaliza un documento sin control de calidad?</h3>
+                <div class="options">
+                    <button data-correct="true">Pérdida de información, errores de lectura y falta de autenticidad</button>
+                    <button data-correct="false">Mejor conservación física</button>
+                    <button data-correct="false">Mayor velocidad de escaneo</button>
+                    <button data-correct="false">No hay riesgos</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="19">
+                <h3>19. ¿Qué formatos digitales se recomiendan para conservar documentos escaneados?</h3>
+                <div class="options">
+                    <button data-correct="true">PDF/A y TIFF</button>
+                    <button data-correct="false">JPG y BMP</button>
+                    <button data-correct="false">DOCX y XLSX</button>
+                    <button data-correct="false">MP4 y AVI</button>
+                </div>
+            </div>
+
+            <div class="question" data-question="20">
+                <h3>20. ¿Cómo se garantiza la autenticidad de un documento digitalizado?</h3>
+                <div class="options">
+                    <button data-correct="true">Aplicando protocolos técnicos, metadatos y firmas digitales</button>
+                    <button data-correct="false">Escaneando en baja resolución</button>
+                    <button data-correct="false">Usando cualquier formato de imagen</button>
+                    <button data-correct="false">Imprimiendo el documento digital</button>
+                </div>
+            </div>
+
+            <div id="result"></div>
+
+            <div id="action-buttons">
+                <button id="validateBtn" disabled class="action-button">Validar Respuesta </button>
+                <button id="nextBtn" disabled class="action-button" style="display: none;">Siguiente Pregunta ➡</button>
+            </div>
+
+        </div>
+        <audio id="success-sound" src="success.mp3" preload="auto"></audio>
+        <audio id="failure-sound" src="failure.mp3" preload="auto"></audio>
+
+        <audio id="win-sound-final" src="felicidades.mp3" preload="auto"></audio>
+        <audio id="lose-sound-final" src="fallaste.mp3" preload="auto"></audio>
+
+    </div>
+
+    <script>
+        // ===========================================
+        //          VARIABLES GLOBALES
+        // ===========================================
+        const questions = document.querySelectorAll('.question');
+        const validateBtn = document.getElementById('validateBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const gameStatus = document.getElementById('gameStatus');
+        const resultDiv = document.getElementById('result');
+        const totalQuestions = questions.length;
+        const quizContainer = document.getElementById('quiz-container');
+        const nameInputScreen = document.getElementById('name-input-screen');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const userNameInput = document.getElementById('userNameInput');
+        const passwordInput = document.getElementById('passwordInput');
+
+        // La clave de acceso
+        const SECRET_PASSWORD = "archivo2025";
+
+        // Variables para los sonidos
+        const successSound = document.getElementById('success-sound');
+        const failureSound = document.getElementById('failure-sound');
+        const winSoundFinal = document.getElementById('win-sound-final');
+        const loseSoundFinal = document.getElementById('lose-sound-final');
+
+        let currentQuestionIndex = 0;
+        let correctAnswers = 0;
+        let selectedAnswer = null;
+        let userName = "Aprendiz";
+
+        // VARIABLE CLAVE PARA REGISTRAR LAS RESPUESTAS
+        let userAnswers = [];
+
+        // ===========================================
+        //          CONFIGURACIÓN DEL LOG
+        // ===========================================
+        //  INSTRUCCIÓN CLAVE: REEMPLACE EL TEXTO ENTRE COMILLAS CON EL URL DE DESPLIEGUE DE SU APPS SCRIPT (DEBE TERMINAR EN /exec)
+        const GOOGLE_APPS_SCRIPT_URL = "https://docs.google.com/spreadsheets/d/13B1qIUa11FkBt9oBpOhm3hKXtq0-0KYvaUswD7RoDOg/edit?usp=sharingSU_URL_DE_APPS_SCRIPT_AQUI";
+
+
+        // --- Funciones de Utilidad ---
+
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        // Función para detener los sonidos individuales
+        function stopIndividualSounds() {
+            // Reinicia y pausa todos los sonidos por si acaso están sonando
+            [successSound, failureSound, winSoundFinal, loseSoundFinal].forEach(audio => {
+                audio.pause();
+                audio.currentTime = 0;
+            });
+        }
+
+        /**
+         * FUNCIÓN NUEVA: Envía los datos del resultado final al log (Google Sheet).
+         */
+        function sendDataToLog(data) {
+            if (GOOGLE_APPS_SCRIPT_URL === "SU_URL_DE_APPS_Shttps://docs.google.com/spreadsheets/d/13B1qIUa11FkBt9oBpOhm3hKXtq0-0KYvaUswD7RoDOg/edit?usp=sharingCRIPT_AQUI") {
+                console.warn(" No se puede registrar. Por favor, configure el GOOGLE_APPS_SCRIPT_URL. Mostrando datos en consola:", data);
+                return;
+            }
+
+            fetch(GOOGLE_APPS_SCRIPT_URL, {
+                method: 'POST',
+                mode: 'no-cors', // Necesario para evitar errores CORS en scripts simples
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+                .then(() => {
+                    console.log("Datos enviados correctamente al log (Google Sheet).");
+                })
+                .catch(error => {
+                    console.error('Error al enviar los datos:', error);
+                });
+        }
+
+
+        // --- Funciones de Gestión del Juego  vfechaaaa ---
+
+              function updateStatus() {
+                gameStatus.innerHTML = `
+                    Pregunta: ${currentQuestionIndex + 1} de ${totalQuestions} | ${correctAnswers}
+                `;
+            }
+
+
+        function showQuestion(index) {
+            questions.forEach((q) => {
+                q.classList.remove('active');
+
+                const optionsContainer = q.querySelector('.options');
+                optionsContainer.querySelectorAll('button').forEach(btn => {
+                    btn.classList.remove('selected', 'correct', 'incorrect');
+                    btn.disabled = false;
+                    // Limpia el texto de la respuesta si se marcó
+                    btn.textContent = btn.textContent.split(' (')[0].split(' ✅')[0].split(' ❌')[0];
+                });
+            });
+
+            if (questions[index]) {
+                questions[index].classList.add('active');
+
+                const optionsContainer = questions[index].querySelector('.options');
+                const optionButtons = Array.from(optionsContainer.querySelectorAll('button'));
+                
+                // MEZCLA LAS OPCIONES
+                shuffleArray(optionButtons);
+
+                optionsContainer.innerHTML = '';
+                optionButtons.forEach(btn => {
+                    optionsContainer.appendChild(btn);
+                    btn.onclick = function() {
+                        selectAnswer(this);
+                    };
+                });
+
+                validateBtn.style.display = 'inline-block';
+                validateBtn.disabled = true;
+                nextBtn.style.display = 'none';
+                resultDiv.style.display = 'none';
+            }
+
+            selectedAnswer = null;
+            updateStatus();
+        }
+
+        function nextQuestion() {
+            currentQuestionIndex++;
+
+            if (currentQuestionIndex < totalQuestions) {
+                showQuestion(currentQuestionIndex);
+            } else {
+                endGame();
+            }
+        }
+
+        function endGame() {
+            questions.forEach(q => q.classList.remove('active'));
+
+            stopIndividualSounds(); // Detiene cualquier sonido individual antes del resultado final
+
+            const WIN_THRESHOLD = 15; // Se gana con 15 aciertos o más (más de 15)
+            const finalResult = correctAnswers > WIN_THRESHOLD ? "Ganó" : "Perdió";
+
+
+            let finalMessage = "";
+
+            // ----------------------------------------------------
+            // 1. COMPILAR Y ENVIAR DATOS ANTES DE MOSTRAR RESULTADO
+            // ----------------------------------------------------
+            const finalData = {
+                timestamp: new Date().toLocaleString('es-CO', { timeZone: 'America/Bogota' }), // Hora de Colombia
+                nombre: userName,
+                puntaje: correctAnswers,
+                totalPreguntas: totalQuestions,
+                resultado: finalResult,
+                // JSON.stringify convierte el arreglo de respuestas a texto para guardarlo en una celda
+                detalleRespuestas: JSON.stringify(userAnswers)
+            };
+            sendDataToLog(finalData);
+            // ----------------------------------------------------
+
+                const fechaActual = new Date().toLocaleDateString("es-CO", {
+                 weekday: "long",
+                    year: "numeric",
+                    month: "long",
+                     day: "numeric"
+                });
+
+            if (finalResult === "Ganó") {
+                // LÓGICA DE VICTORIA
+                finalMessage = `
+                    <div style="color: #008040; border-color: #008040; background-color: #e6ffe6; padding: 20px; border-radius: 10px; border: 3px solid #008040;">
+                        ¡FELICIDADES, ${userName.toUpperCase()}!<br>
+                        ¡Tienes Claros los Conceptos de Preservacion y Digitalizacion! Has superado el reto con ${correctAnswers} aciertos.<br>
+                        <p>Fecha: ${fechaActual}</p>
+                    </div>
+                `;
+                winSoundFinal.play();
+
+            } else {
+                // LÓGICA DE DERROTA/MOTIVACIÓN
+                finalMessage = `
+                    <div style="color: #004080; border-color: #004080; background-color: #f5f8ff; padding: 20px; border-radius: 10px; border: 3px solid #004080;">
+                        <p>¡Buen intento, ${userName}!</p>
+                        <p>Obtuviste ${correctAnswers} aciertos de ${totalQuestions}.</p>
+                        <p>¡Sigue adelante! Repasa los temas de Conservación y Digitalización y vuelve a intentarlo. ¡la próxima vez lo lograrás! </p>
+                        <p>Fecha: ${fechaActual}</p>
+                    </div>
+                `;
+                loseSoundFinal.play();
+            }
+
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = finalMessage;
+
+            document.getElementById('action-buttons').style.display = 'none';
+            gameStatus.style.display = 'none';
+        }
+
+        // --- Función para Seleccionar Respuesta ---
+        function selectAnswer(button) {
+            const currentOptions = questions[currentQuestionIndex].querySelectorAll('.options button');
+            currentOptions.forEach(btn => btn.classList.remove('selected'));
+            button.classList.add('selected');
+            selectedAnswer = button;
+            validateBtn.disabled = false;
+        }
+
+
+        // --- Función para Comprobar la Respuesta al Validar ---
+        function validateAnswer() {
+            if (!selectedAnswer) return;
+
+            stopIndividualSounds();
+
+            const isCorrect = selectedAnswer.getAttribute('data-correct') === 'true';
+
+            // ----------------------------------------------------
+            // 2. REGISTRAR LA RESPUESTA DE ESTA PREGUNTA
+            // ----------------------------------------------------
+            const questionText = questions[currentQuestionIndex].querySelector('h3').textContent.trim();
+            // Extrae solo el texto de la opción seleccionada, eliminando los emojis y paréntesis
+            const selectedText = selectedAnswer.textContent.split(' (')[0].split(' ✅')[0].split(' ❌')[0];
+
+            userAnswers.push({
+                num: currentQuestionIndex + 1,
+                pregunta: questionText,
+                respuesta: selectedText,
+                correcta: isCorrect
+            });
+            // ----------------------------------------------------
+
+
+            if (isCorrect) {
+                selectedAnswer.classList.add("correct");
+                selectedAnswer.textContent += " ✅ ¡Correcto!";
+                correctAnswers++;
+                successSound.play();
+            } else {
+                selectedAnswer.classList.add("incorrect");
+                selectedAnswer.textContent += " ❌ Incorrecto";
+                failureSound.play();
+
+                // Muestra cuál era la correcta
+                const currentOptions = questions[currentQuestionIndex].querySelectorAll('.options button');
+                currentOptions.forEach(btn => {
+                    if (btn.getAttribute('data-correct') === 'true') {
+                        btn.classList.add('correct');
+                        btn.textContent += " (Respuesta Correcta)";
+                    }
+                });
+            }
+
+            const currentOptions = questions[currentQuestionIndex].querySelectorAll('.options button');
+            currentOptions.forEach(btn => btn.disabled = true);
+
+            validateBtn.style.display = 'none';
+            nextBtn.style.display = 'inline-block';
+            nextBtn.disabled = false; // Habilitar el botón Siguiente
+        }
+
+
+        // --- Event Listeners y Lógica de Inicio ---
+
+        // Función para Iniciar el Juego
+        function initializeQuiz() {
+            const enteredPassword = passwordInput.value.trim();
+            if (userNameInput.value.trim() === "" || enteredPassword === "") {
+                alert("Por favor, ingresa tu nombre y el código de acceso.");
+                return;
+            }
+
+            if (enteredPassword !== SECRET_PASSWORD) {
+                alert("Código de acceso incorrecto.");
+                return;
+            }
+
+            userName = userNameInput.value.trim(); // Guarda el nombre del usuario
+            nameInputScreen.style.display = 'none';
+            quizContainer.style.display = 'block';
+            currentQuestionIndex = 0;
+            correctAnswers = 0;
+            userAnswers = [];
+            showQuestion(currentQuestionIndex);
+        }
+        
+        // Asignar eventos
+        startGameBtn.addEventListener('click', initializeQuiz);
+        validateBtn.addEventListener('click', validateAnswer);
+        nextBtn.addEventListener('click', nextQuestion);
+
+        // Inicializar la primera pregunta (pantalla de inicio)
+        document.addEventListener('DOMContentLoaded', () => {
+            nameInputScreen.style.display = 'block';
+            quizContainer.style.display = 'none';
+            // Aseguramos que solo haya una instancia del logo en el contenedor.
+            const watermarks = document.querySelectorAll('#name-input-screen .content-logo, #quiz-container .content-logo');
+            watermarks.forEach(wm => wm.remove());
+        });
+        // ----------------------------------------------------
+        // La función validateAnswer no estaba cerrada, la cierro aquí.
+        // ----------------------------------------------------
+    </script>
+</body>
+
+</html>

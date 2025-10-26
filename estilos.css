@@ -1,0 +1,242 @@
+/* ======================================= */
+/* 1. LAYOUT PRINCIPAL (AJUSTES CRÍTICOS) */
+/* ======================================= */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f0f4f8;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh; /*  CRÍTICO: Asegura que el cuerpo ocupe toda la altura */
+}
+
+.container {
+    width: 100%; /* Mejor usar 100% y max-width para responsividad */
+    max-width: 600px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra más estándar */
+    padding: 20px;
+    min-height: 400px;
+    box-sizing: border-box;
+    position: relative; /*  CRÍTICO: Para que .content-logo se posicione dentro de este div */
+    overflow: hidden; /* Evita que el logo se salga del borde del contenedor */
+}
+
+/* ======================================= */
+/* 7. MARCA DE AGUA (SOLUCIÓN DEFINITIVA) */
+/* ======================================= */
+.content-logo {
+    position: absolute;
+    /*  CRÍTICO: Centrado absoluto en el contenedor */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); 
+    
+    /*  TAMAÑO: Ajuste para que se vea bien como marca de agua */
+    width: 80%;
+    max-width: 400px; 
+    height: auto;
+    
+    /*  OPACIDAD Y Z-INDEX */
+    opacity: 0.1; /* Sutil transparencia */
+    z-index: 0; /* Capa inferior, detrás de todo */
+    pointer-events: none; /* No interfiere con clics */
+}
+
+/* ======================================= */
+/* 2. HEADER Y TÍTULO */
+/* ======================================= */
+.header-content {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    position: relative;
+    z-index: 2; /* Asegura que el header esté encima del logo */
+}
+
+#header-logo {
+    height: 50px;
+    width: auto;
+    margin-right: 15px;
+}
+
+h1 {
+    color: #004080;
+    margin: 0; 
+}
+
+/* ======================================= */
+/* 3. PANTALLAS (HOME/QUIZ/RESULTADO) */
+/* ======================================= */
+#name-input-screen {
+    text-align: center;
+    padding: 50px 20px;
+    position: relative;
+    z-index: 2; /* Asegura que la pantalla de inicio esté encima del logo */
+}
+
+/* Se añade este estilo para ocultar el quiz al inicio */
+#quiz-container {
+    display: none; 
+    position: relative; /* Necesario para el z-index */
+    z-index: 2; /* Asegura que el quiz esté encima del logo */
+}
+
+#result {
+    display: none;
+    text-align: center;
+    font-size: 1.5em;
+    color: #004080;
+    margin-top: 40px;
+    padding: 20px;
+    border: 2px solid #004080;
+    border-radius: 10px;
+    font-weight: bold;
+    position: relative;
+    z-index: 2; /* Asegura que el resultado esté encima del logo */
+}
+
+/* ======================================= */
+/* 4. FORMULARIO Y BOTONES INICIO */
+/* ======================================= */
+#userNameInput,
+#passwordInput {
+    padding: 10px;
+    margin: 10px auto;
+    width: 80%;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1.1em;
+    display: block;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+#startGameBtn {
+    padding: 12px 30px;
+    background-color: #004080;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1.1em;
+    font-weight: bold;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+    position: relative;
+    z-index: 2;
+}
+
+#startGameBtn:hover {
+    background-color: #0056b3;
+}
+
+/* ======================================= */
+/* 5. QUIZ Y OPCIONES */
+/* ======================================= */
+.question {
+    display: none;
+    margin-bottom: 20px;
+    position: relative;
+    z-index: 2; /* Asegura que la pregunta esté encima del logo */
+}
+
+.question.active {
+    display: block;
+}
+
+h3 {
+    color: #333;
+}
+
+.options button {
+    display: block;
+    width: 100%;
+    margin: 8px 0;
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 5px;
+    background-color: #f8f8f8;
+    cursor: pointer;
+    transition: background-color 0.3s, border-color 0.3s;
+    text-align: left;
+    box-sizing: border-box;
+    position: relative;
+    z-index: 2;
+}
+
+.options button:hover:not(:disabled) {
+    background-color: #cce0ff;
+    border-color: #004080;
+}
+
+.options button.selected {
+    border: 3px solid #004080;
+    background-color: #f0f4f8;
+}
+
+.correct {
+    background-color: #c8e6c9 !important; /* Verde claro */
+    border-color: #008040 !important; /* Borde verde oscuro */
+}
+
+.incorrect {
+    background-color: #ffcdd2 !important; /* Rojo claro */
+    border-color: #d32f2f !important; /* Borde rojo oscuro */
+}
+
+/* ======================================= */
+/* 6. BOTONES DE ACCIÓN Y ESTATUS */
+/* ======================================= */
+#action-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+    position: relative;
+    z-index: 2;
+}
+
+.action-button {
+    padding: 10px 20px;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    flex-grow: 1;
+    margin: 0 5px;
+    transition: opacity 0.3s, background-color 0.3s;
+}
+
+#validateBtn {
+    background-color: #008040; /* Verde para validar */
+}
+#validateBtn:hover:not(:disabled) { background-color: #006400; }
+
+#nextBtn {
+    background-color: #004080; /* Azul para siguiente */
+}
+#nextBtn:hover:not(:disabled) { background-color: #0056b3; }
+
+
+.action-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+#gameStatus {
+    margin-bottom: 20px;
+    padding: 10px;
+    border: 1px solid #004080;
+    border-radius: 5px;
+    background-color: #f5f8ff;
+    font-weight: bold;
+    color: #004080;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
